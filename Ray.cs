@@ -37,7 +37,7 @@ namespace RaycasterInWF {
 		
 		public float length;
 
-		public Ray castRay() {
+		public Ray CastRay() {
 			float stepX = MathF.Cos(angle) * stepSize;
 			float stepY = MathF.Sin(angle) * stepSize;
 
@@ -50,7 +50,7 @@ namespace RaycasterInWF {
 
 				length += stepSize;
 
-				wallTypeHit = gs.mapAt((int)MathF.Floor(currentX), (int)MathF.Floor(currentY));
+				wallTypeHit = gs.MapAt((int)MathF.Floor(currentX), (int)MathF.Floor(currentY));
 
 				if (wallTypeHit >= 1) {
 					hitWall = true;

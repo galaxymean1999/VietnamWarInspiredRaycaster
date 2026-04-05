@@ -9,8 +9,8 @@ namespace RaycasterInWF {
 	public class Entity {
 		public Entity(float x, float y, int type) {
 			this.type = type;
-			position.X = x;
-			position.Y = y;
+			this.position.X = x;
+			this.position.Y = y;
 		}
 
 		public Vector2 position;

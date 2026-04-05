@@ -18,7 +18,7 @@ namespace RaycasterInWF {
 
 		public float headingAngle = MathF.PI;
 
-		public void normaliseHeading() {
+		public void NormaliseHeading() {
 			if (headingAngle < -MathF.PI) {
 				headingAngle += 2 * MathF.PI;
 			}

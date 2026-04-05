@@ -71,6 +71,9 @@ namespace RaycasterInWF {
 
 					entityList.Add(new Entity(5.5f, 7.5f, 0));
 					break;
+				case 1:
+
+					break;
 			}
 
 			return entityList;

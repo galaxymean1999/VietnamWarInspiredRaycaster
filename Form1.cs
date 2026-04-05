@@ -20,6 +20,8 @@ namespace RaycasterInWF
 			zBuffer = new float[ClientSize.Width + 1];
 
 			this.Text = "Vietnam Raycaster";
+
+			sw.Start();
 		}
 
 		private GameState gs;
@@ -30,6 +32,10 @@ namespace RaycasterInWF
 		private Image entityTextures;
 
 		private float[] zBuffer;
+
+		private float dt = 1;
+
+		private Stopwatch sw = new Stopwatch();
 
 		private void Form1_KeyDown(object sender, KeyEventArgs e) {
 			if (!keys.Contains(e.KeyCode)) {
@@ -42,6 +48,8 @@ namespace RaycasterInWF
 		}
 
 		private void Draw(object sender, PaintEventArgs e) {
+			sw.Restart();
+
 			Graphics g = e.Graphics;
 			g.InterpolationMode = InterpolationMode.NearestNeighbor;
 
@@ -50,6 +58,10 @@ namespace RaycasterInWF
 			DrawWalls(g);
 			DrawEntities(g);
 			DrawMinimap(g);
+
+			sw.Stop();
+
+			dt = sw.ElapsedMilliseconds / 10;
 		}
 
 		private void Update(object sender, EventArgs e) {
@@ -58,22 +70,22 @@ namespace RaycasterInWF
 			}
 
 			if (keys.Contains(Keys.A)) {
-				gs.player.headingAngle -= 0.05f;
+				gs.player.headingAngle -= 0.02f * dt;
 				gs.player.NormaliseHeading();
 			}
 
 			if (keys.Contains(Keys.D)) {
-				gs.player.headingAngle += 0.05f;
+				gs.player.headingAngle += 0.02f * dt;
 				gs.player.NormaliseHeading();
 			}
 
 			if (keys.Contains(Keys.W)) {
 				
-				if (gs.MapAt((int)(gs.player.position.X + MathF.Cos(gs.player.headingAngle) / 20), (int)gs.player.position.Y) == 0) {
-					gs.player.position.X = gs.player.position.X + MathF.Cos(gs.player.headingAngle) / 20;
+				if (gs.MapAt((int)(gs.player.position.X + MathF.Cos(gs.player.headingAngle) / 50 * dt), (int)gs.player.position.Y) == 0) {
+					gs.player.position.X = gs.player.position.X + MathF.Cos(gs.player.headingAngle) / 50 * dt;
 				}
-				if (gs.MapAt((int)gs.player.position.X, (int)(gs.player.position.Y + MathF.Sin(gs.player.headingAngle) / 20)) == 0) {
-					gs.player.position.Y = gs.player.position.Y + MathF.Sin(gs.player.headingAngle) / 20;
+				if (gs.MapAt((int)gs.player.position.X, (int)(gs.player.position.Y + MathF.Sin(gs.player.headingAngle) / 50 * dt)) == 0) {
+					gs.player.position.Y = gs.player.position.Y + MathF.Sin(gs.player.headingAngle) / 50 * dt;
 				}
 
 				if (new Ray(gs.player.position.X, gs.player.position.Y, gs.player.headingAngle, 10, 0.01f, gs).CastRay().wallTypeHit == 2) {
@@ -85,11 +97,11 @@ namespace RaycasterInWF
 			}
 
 			if (keys.Contains(Keys.S)) {
-				if (gs.MapAt((int)(gs.player.position.X - MathF.Cos(gs.player.headingAngle) / 20), (int)gs.player.position.Y) == 0) {
-					gs.player.position.X = gs.player.position.X - MathF.Cos(gs.player.headingAngle) / 20;
+				if (gs.MapAt((int)(gs.player.position.X - MathF.Cos(gs.player.headingAngle) / 50 * dt), (int)gs.player.position.Y) == 0) {
+					gs.player.position.X = gs.player.position.X - MathF.Cos(gs.player.headingAngle) / 50 * dt;
 				}
-				if (gs.MapAt((int)gs.player.position.X, (int)(gs.player.position.Y - MathF.Sin(gs.player.headingAngle) / 20)) == 0) {
-					gs.player.position.Y = gs.player.position.Y - MathF.Sin(gs.player.headingAngle) / 20;
+				if (gs.MapAt((int)gs.player.position.X, (int)(gs.player.position.Y - MathF.Sin(gs.player.headingAngle) / 50 * dt)) == 0) {
+					gs.player.position.Y = gs.player.position.Y - MathF.Sin(gs.player.headingAngle) / 50 * dt;
 				}
 			}
 
@@ -118,7 +130,6 @@ namespace RaycasterInWF
 				int columnY = ClientSize.Height / 2 - columnHeight / 2;
 
 				if (ray.hitWall) {
-					int light = 4;
 
 					Rectangle source = new Rectangle(1, 0, 1, 32);
 
@@ -132,7 +143,7 @@ namespace RaycasterInWF
 					Rectangle destination = new Rectangle(column, columnY, 1, columnHeight);
 
 					ImageAttributes attr = new ImageAttributes();
-					attr.SetGamma((float)light * ray.length > 6f ? (float)light * ray.length : 6f);
+					attr.SetGamma((float)gs.lightLevel * ray.length > 6f ? (float)gs.lightLevel * ray.length : 6f);
 
 					g.DrawImage(wallTextures, destination, source.X, source.Y, source.Width, source.Height, GraphicsUnit.Pixel, attr);
 
@@ -190,12 +201,18 @@ namespace RaycasterInWF
 								//if behind a wall then skip
 								if (entity.distance < zBuffer[i]) {
 									Rectangle destination = new Rectangle(i, screenY, 1, height);
-									Rectangle source = new Rectangle((int)(32.0f / (float)width * (float)(i - startScreenX)), 0, 1, 32);
+									Rectangle source = new Rectangle(32 * entity.type + (int)(32.0f / (float)width * (float)(i - startScreenX)), 0, 1, 32);
 
 									// light to distance
 									ImageAttributes attr = new ImageAttributes();
 
-									attr.SetGamma((float)1 * entity.distance > 1f ? (float)1 * entity.distance : 1f);
+									if (gs.lightLevel - 3 > 0) {
+										attr.SetGamma((float)gs.lightLevel - 3 * entity.distance > 1f ? (float)gs.lightLevel - 3 * entity.distance : 1f);
+									}
+									else {
+										attr.SetGamma((float)0.5f * entity.distance > 1f ? (float)0.5f * entity.distance : 1f);
+									}
+										
 
 									g.DrawImage(entityTextures, destination, source.X, source.Y, source.Width, source.Height, GraphicsUnit.Pixel, attr);
 								}

@@ -19,6 +19,9 @@ namespace RaycasterInWF {
 
 		public const int tileSize = 1;
 
+		// light level - bigger is less light
+		public int lightLevel = 4;
+
 		public int MapAt(int x, int y) {
 			if (x < lvl.mapWidth && y < lvl.mapHeight) {
 				return lvl.map[(int)(y / tileSize) * lvl.mapWidth + (int)(x / tileSize)];
@@ -34,7 +37,7 @@ namespace RaycasterInWF {
 				entity.distance = MathF.Sqrt(MathF.Pow(player.position.X - entity.position.X, 2) + MathF.Pow(player.position.Y - entity.position.Y, 2));
 			}
 
-			lvl.entities.Sort((b, a) => b.distance.CompareTo(a.distance));
+			lvl.entities.Sort((a, b) => b.distance.CompareTo(a.distance));
 		}
 	}
 }

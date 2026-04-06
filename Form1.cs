@@ -134,6 +134,7 @@ namespace RaycasterInWF
 
 			l_score.Text = (gs.score).ToString();
 			l_level.Text = (gs.currentLevel + 1).ToString();
+			l_playerPos.Text = $"x: {gs.player.position.X} y: {gs.player.position.Y}";
 
 			if (gs.player.shot) {
 				gs.shootLightTimer--;

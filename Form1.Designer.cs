@@ -34,6 +34,7 @@
 			l_level = new Label();
 			l_levelHeading = new Label();
 			l_scoreHeading = new Label();
+			l_playerPos = new Label();
 			hudPanel.SuspendLayout();
 			SuspendLayout();
 			// 
@@ -47,6 +48,7 @@
 			// 
 			hudPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 			hudPanel.BackColor = Color.FromArgb(0, 64, 0);
+			hudPanel.Controls.Add(l_playerPos);
 			hudPanel.Controls.Add(l_score);
 			hudPanel.Controls.Add(l_level);
 			hudPanel.Controls.Add(l_levelHeading);
@@ -106,6 +108,19 @@
 			l_scoreHeading.TabIndex = 0;
 			l_scoreHeading.Text = "SCORE";
 			// 
+			// l_playerPos
+			// 
+			l_playerPos.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			l_playerPos.BackColor = Color.Transparent;
+			l_playerPos.Font = new Font("Segoe UI", 15F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			l_playerPos.ForeColor = Color.White;
+			l_playerPos.Location = new Point(311, 28);
+			l_playerPos.Name = "l_playerPos";
+			l_playerPos.Size = new Size(301, 28);
+			l_playerPos.TabIndex = 4;
+			l_playerPos.Text = "0";
+			l_playerPos.TextAlign = ContentAlignment.MiddleRight;
+			// 
 			// Form1
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -133,5 +148,6 @@
 		private Label l_score;
 		private Label l_level;
 		private Label l_levelHeading;
+		private Label l_playerPos;
 	}
 }

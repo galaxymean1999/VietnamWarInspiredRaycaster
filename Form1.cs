@@ -21,6 +21,10 @@ namespace RaycasterInWF
 
 			this.Text = "Vietnam Raycaster";
 
+			l_level.Text = (gs.currentLevel + 1).ToString();
+
+			l_score.Text = (gs.score).ToString();
+
 			sw.Start();
 		}
 
@@ -107,6 +111,9 @@ namespace RaycasterInWF
 
 			gs.SortEntities();
 
+			l_score.Text = (gs.score).ToString();
+			l_level.Text = (gs.currentLevel + 1).ToString();
+
 			this.Invalidate();
 		}
 
@@ -162,6 +169,17 @@ namespace RaycasterInWF
 
 				// realtive angle between player heading and entity
 				float angleEntityToPlayer = MathF.PI / 2 + gs.player.headingAngle + MathF.Atan(dx / dy);
+				
+				//             |
+				// NESAHAT !!! V
+				if (entity.position.Y > gs.player.position.Y) {
+					dy = gs.player.position.Y - entity.position.Y;
+					dx = gs.player.position.X - entity.position.X;
+
+					angleEntityToPlayer = -MathF.PI / 2 + gs.player.headingAngle + MathF.Atan(dx / dy);
+				}
+				// NESAHAT !!! A
+				//             |
 
 				// normalisation of relative angle
 				if (angleEntityToPlayer < -MathF.PI) {
@@ -172,7 +190,7 @@ namespace RaycasterInWF
 				}
 
 				// converting to relative coordinates
-				//float rx = entity.distance * MathF.Sin(angleEntityToPlayer);
+				float rx = entity.distance * MathF.Sin(angleEntityToPlayer);
 				float ry = entity.distance * MathF.Cos(angleEntityToPlayer);
 
 				// if behind us skip it
@@ -190,6 +208,10 @@ namespace RaycasterInWF
 						// screen x position
 						int screenX = (int)MathF.Abs((int)((angleEntityToPlayer - Player.fov / 2) / Player.fov * ClientSize.Width));
 
+						if (entity.position.Y > gs.player.position.Y) {
+							screenX = (int)MathF.Abs((int)((angleEntityToPlayer - Player.fov / 2) / Player.fov * ClientSize.Width));
+						}
+
 						int startScreenX = screenX - width / 2;
 
 						int screenY = ClientSize.Height / 2 - height / 2;
@@ -206,8 +228,8 @@ namespace RaycasterInWF
 									// light to distance
 									ImageAttributes attr = new ImageAttributes();
 
-									if (gs.lightLevel - 3 > 0) {
-										attr.SetGamma((float)gs.lightLevel - 3 * entity.distance > 1f ? (float)gs.lightLevel - 3 * entity.distance : 1f);
+									if (gs.lightLevel - 1 > 0) {
+										attr.SetGamma((float)gs.lightLevel * entity.distance - 2 > 1f ? (float)gs.lightLevel * entity.distance - 2 : 1f);
 									}
 									else {
 										attr.SetGamma((float)0.5f * entity.distance > 1f ? (float)0.5f * entity.distance : 1f);

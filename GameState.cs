@@ -8,16 +8,18 @@ using System.Threading.Tasks;
 namespace RaycasterInWF {
 	public class GameState {
 		public GameState() {
-
+			lvl = new Level(currentLevel);
 		}
 
-		public Level lvl = new Level(0);
+		public Level lvl;
 
-		public Player player = new Player(13.5f, 13.5f);
+		public Player player = new Player(4.5f, 12.5f);
 
-		public int currentLevel = 0;
+		public int currentLevel = 1;
 
 		public const int tileSize = 1;
+
+		public int score = 0;
 
 		// light level - bigger is less light
 		public int lightLevel = 4;

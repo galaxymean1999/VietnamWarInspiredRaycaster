@@ -78,6 +78,33 @@ namespace RaycasterInWF {
 				}
 			}
 
+			if (hitWall) {
+				float unitX = currentX - MathF.Floor(currentX);
+				float unitY = currentY - MathF.Floor(currentY);
+
+				if (horiVerWall == 'h') {
+					if (unitX < 0.05f) {
+						currentX = MathF.Floor(currentX);
+					}
+					else if (unitX > 0.95f) {
+						currentX = MathF.Ceiling(currentX);
+					}
+				}
+				else if (horiVerWall == 'v') {
+					if (unitY < 0.05f) {
+						currentY = MathF.Floor(currentY);
+					}
+					else if (unitY > 0.95f) {
+						currentY = MathF.Ceiling(currentY);
+					}
+				}
+
+				endX = currentX;
+				endY = currentY;
+
+				length = MathF.Sqrt(MathF.Pow(startX - endX, 2) + MathF.Pow(startY - endY, 2));
+			}
+
 			return this;
 		}
 	}

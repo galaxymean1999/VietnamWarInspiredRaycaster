@@ -45,6 +45,11 @@ namespace RaycasterInWF
 			if (!keys.Contains(e.KeyCode)) {
 				keys.Add(e.KeyCode);
 			}
+
+			if (e.KeyCode == Keys.ControlKey) {
+				gs.player.Shoot(gs);
+				gs.lightLevel = 1;
+			}
 		}
 
 		private void Form1_KeyUp(object sender, KeyEventArgs e) {
@@ -66,6 +71,7 @@ namespace RaycasterInWF
 			sw.Stop();
 
 			dt = sw.ElapsedMilliseconds / 10;
+
 		}
 
 		private void Update(object sender, EventArgs e) {
@@ -73,24 +79,35 @@ namespace RaycasterInWF
 				this.Close();
 			}
 
-			if (keys.Contains(Keys.A)) {
+			//
+			// movement
+			//
+
+			if (keys.Contains(Keys.Left)) {
 				gs.player.headingAngle -= 0.02f * dt;
 				gs.player.NormaliseHeading();
 			}
 
-			if (keys.Contains(Keys.D)) {
+			if (keys.Contains(Keys.Right)) {
 				gs.player.headingAngle += 0.02f * dt;
 				gs.player.NormaliseHeading();
 			}
 
-			if (keys.Contains(Keys.W)) {
-				
+			if (keys.Contains(Keys.Up)) {
+				//
+				// move with wall sliding
+				//
+
 				if (gs.MapAt((int)(gs.player.position.X + MathF.Cos(gs.player.headingAngle) / 50 * dt), (int)gs.player.position.Y) == 0) {
 					gs.player.position.X = gs.player.position.X + MathF.Cos(gs.player.headingAngle) / 50 * dt;
 				}
 				if (gs.MapAt((int)gs.player.position.X, (int)(gs.player.position.Y + MathF.Sin(gs.player.headingAngle) / 50 * dt)) == 0) {
 					gs.player.position.Y = gs.player.position.Y + MathF.Sin(gs.player.headingAngle) / 50 * dt;
 				}
+
+				//
+				// check if ladder in front
+				//
 
 				if (new Ray(gs.player.position.X, gs.player.position.Y, gs.player.headingAngle, 10, 0.01f, gs).CastRay().wallTypeHit == 2) {
 					gs.currentLevel++;
@@ -100,7 +117,11 @@ namespace RaycasterInWF
 				}
 			}
 
-			if (keys.Contains(Keys.S)) {
+			if (keys.Contains(Keys.Down)) {
+				//
+				// move with wall sliding
+				//
+
 				if (gs.MapAt((int)(gs.player.position.X - MathF.Cos(gs.player.headingAngle) / 50 * dt), (int)gs.player.position.Y) == 0) {
 					gs.player.position.X = gs.player.position.X - MathF.Cos(gs.player.headingAngle) / 50 * dt;
 				}
@@ -114,6 +135,15 @@ namespace RaycasterInWF
 			l_score.Text = (gs.score).ToString();
 			l_level.Text = (gs.currentLevel + 1).ToString();
 
+			if (gs.player.shot) {
+				gs.shootLightTimer--;
+			}
+			if (gs.shootLightTimer < 0) {
+				gs.player.shot = false;
+				gs.shootLightTimer = 5;
+				gs.lightLevel = 4;
+			}
+			
 			this.Invalidate();
 		}
 
@@ -150,7 +180,7 @@ namespace RaycasterInWF
 					Rectangle destination = new Rectangle(column, columnY, 1, columnHeight);
 
 					ImageAttributes attr = new ImageAttributes();
-					attr.SetGamma((float)gs.lightLevel * ray.length > 6f ? (float)gs.lightLevel * ray.length : 6f);
+					attr.SetGamma((float)gs.lightLevel * ray.length > 6f ? (float)gs.lightLevel * ray.length : (gs.player.shot ? 3f : 6f));
 
 					g.DrawImage(wallTextures, destination, source.X, source.Y, source.Width, source.Height, GraphicsUnit.Pixel, attr);
 

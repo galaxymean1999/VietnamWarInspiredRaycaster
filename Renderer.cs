@@ -1,0 +1,182 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing.Imaging;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace RaycasterInWF {
+	public class Renderer {
+		public Renderer(GameState gameState, Size clientSize) {
+			gs = gameState;
+			ClientSize = clientSize;
+
+			wallTextures = Image.FromFile("textures/wallTextures.png");
+			entityTextures = Image.FromFile("textures/entityTextures.png");
+
+			zBuffer = new float[ClientSize.Width + 1];
+		}
+
+		private GameState gs;
+
+		private Size ClientSize;
+
+		private float[] zBuffer;
+
+		private Image wallTextures;
+		private Image entityTextures;
+
+		private const int textureSize = 32;
+
+		public void Render(Graphics g) {
+			DrawWalls(g);
+			DrawEntities(g);
+
+			//DrawMinimap(g);
+		}
+
+		private void DrawWalls(Graphics g) {
+			int column = 0;
+
+			for (float a = gs.player.headingAngle - Player.fov / 2; a < gs.player.headingAngle + Player.fov / 2; a += Player.fov / ClientSize.Width) {
+				Ray ray = new Ray(gs.player.position.X, gs.player.position.Y, a, 200, 0.05f, gs);
+				ray = ray.CastRay();
+
+				int columnHeight = 0;
+
+				int offset = 0;
+
+				if (ray.length > 0) {
+					columnHeight = (int)((float)ClientSize.Height / (ray.length * MathF.Cos(a - gs.player.headingAngle)));
+				}
+
+				int columnY = ClientSize.Height / 2 - columnHeight / 2;
+
+				if (columnY < 0) {
+					offset = (int)MathF.Abs(columnY / (columnHeight / textureSize) / 2);
+				}
+
+				if (ray.hitWall) {
+					Rectangle source = new Rectangle(1, offset, 1, textureSize - offset * 2);
+
+					if (ray.horiVerWall == 'v') {
+						source.X = (ray.wallTypeHit - 1) * textureSize + (int)((ray.endY - MathF.Floor(ray.endY)) * textureSize);
+					}
+					else {
+						source.X = (ray.wallTypeHit - 1) * textureSize + (int)((ray.endX - MathF.Floor(ray.endX)) * textureSize);
+					}
+
+					Rectangle destination = new Rectangle(column, columnY, 1, columnHeight);
+
+					ImageAttributes attr = new ImageAttributes();
+					attr.SetGamma((float)gs.lightLevel * ray.length > 6f ? (float)gs.lightLevel * ray.length : (gs.player.shot ? 3f : 6f));
+
+					g.DrawImage(wallTextures, destination, source.X, source.Y, source.Width, source.Height, GraphicsUnit.Pixel, attr);
+
+					zBuffer[column] = ray.length;
+				}
+
+				column++;
+			}
+		}
+
+		private void DrawEntities(Graphics g) {
+			foreach (Entity entity in gs.lvl.entities) {
+				// distance along x and y
+				float dx = entity.position.X - gs.player.position.X;
+				float dy = entity.position.Y - gs.player.position.Y;
+
+				// realtive angle between player heading and entity
+				float angleEntityToPlayer = MathF.PI / 2 + gs.player.headingAngle + MathF.Atan(dx / dy);
+
+				//             |
+				// NESAHAT !!! V
+				if (entity.position.Y > gs.player.position.Y) {
+					dy = gs.player.position.Y - entity.position.Y;
+					dx = gs.player.position.X - entity.position.X;
+
+					angleEntityToPlayer = -MathF.PI / 2 + gs.player.headingAngle + MathF.Atan(dx / dy);
+				}
+				// NESAHAT !!! A
+				//             |
+
+				// normalisation of relative angle
+				if (angleEntityToPlayer < -MathF.PI) {
+					angleEntityToPlayer += 2 * MathF.PI;
+				}
+				else if (angleEntityToPlayer > MathF.PI) {
+					angleEntityToPlayer -= 2 * MathF.PI;
+				}
+
+				// converting to relative coordinates
+				float rx = entity.distance * MathF.Sin(angleEntityToPlayer);
+				float ry = entity.distance * MathF.Cos(angleEntityToPlayer);
+
+				// if behind us skip it
+				if (ry > 0) {
+					// if entity not in player fov
+					if (angleEntityToPlayer >= -Player.fov / 2 && angleEntityToPlayer <= Player.fov / 2) {
+						// calculate height of entity
+						int height = (int)(ClientSize.Height / (entity.distance));
+						if (height > ClientSize.Height) {
+							height = ClientSize.Height;
+						}
+
+						int width = height;
+
+						// screen x position
+						int screenX = (int)MathF.Abs((int)((angleEntityToPlayer - Player.fov / 2) / Player.fov * ClientSize.Width));
+
+						if (entity.position.Y > gs.player.position.Y) {
+							screenX = (int)MathF.Abs((int)((angleEntityToPlayer - Player.fov / 2) / Player.fov * ClientSize.Width));
+						}
+
+						int startScreenX = screenX - width / 2;
+
+						int screenY = ClientSize.Height / 2 - height / 2;
+
+						// drawing the entity
+						for (int i = startScreenX; i < startScreenX + width; i++) {
+							// if offscreen then skip
+							if (i >= 0 && i < ClientSize.Width) {
+								//if behind a wall then skip
+								if (entity.distance < zBuffer[i]) {
+									Rectangle destination = new Rectangle(i, screenY, 1, height);
+									Rectangle source = new Rectangle(textureSize * entity.type + (int)((float)textureSize / (float)width * (float)(i - startScreenX)), 0, 1, textureSize);
+
+									// light to distance
+									ImageAttributes attr = new ImageAttributes();
+
+									if (gs.lightLevel - 1 > 0) {
+										attr.SetGamma((float)gs.lightLevel * entity.distance - 2 > 1f ? (float)gs.lightLevel * entity.distance - 2 : 1f);
+									}
+									else {
+										attr.SetGamma((float)0.5f * entity.distance > 1f ? (float)0.5f * entity.distance : 1f);
+									}
+
+
+									g.DrawImage(entityTextures, destination, source.X, source.Y, source.Width, source.Height, GraphicsUnit.Pixel, attr);
+								}
+								else {
+									continue;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		private void DrawMinimap(Graphics g) {
+			for (int y = 0; y < gs.lvl.mapHeight; y++) {
+				for (int x = 0; x < gs.lvl.mapWidth; x++) {
+					if (gs.MapAt(x, y) >= 1) {
+						g.FillRectangle(Brushes.Gray, x * 10, y * 10, 10, 10);
+					}
+				}
+			}
+
+			g.FillEllipse(Brushes.Red, gs.player.position.X * 10, gs.player.position.Y * 10, 2, 2);
+		}
+	}
+}

@@ -63,7 +63,6 @@ namespace RaycasterInWF
 			sw.Stop();
 
 			dt = sw.ElapsedMilliseconds / 10;
-
 		}
 
 		private void Update(object sender, EventArgs e) {

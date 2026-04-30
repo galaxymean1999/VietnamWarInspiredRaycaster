@@ -38,26 +38,31 @@ namespace RaycasterInWF {
 		public float length;
 
 		public Ray CastRay() {
+			// calculating step
 			float stepX = MathF.Cos(angle) * stepSize;
 			float stepY = MathF.Sin(angle) * stepSize;
 
 			float currentX = startX;
 			float currentY = startY;
 
+			// stepping
 			for (int i = 0; i < maxSteps; i++) {
 				currentX += stepX;
 				currentY += stepY;
 
 				length += stepSize;
 
+				// checking the wall type at the current position of the ray
 				wallTypeHit = gs.MapAt((int)MathF.Floor(currentX), (int)MathF.Floor(currentY));
 
 				if (wallTypeHit >= 1) {
 					hitWall = true;
 
+					// calculating % 1 with floating point numbers
 					float unitX = currentX - MathF.Floor(currentX);
 					float unitY = currentY - MathF.Floor(currentY);
 
+					// checking what type of wall is hit if horizontal or vertical
 					if (unitX < 0.05f || unitX > 0.95f) {
 						horiVerWall = 'v';
 					}
@@ -82,6 +87,8 @@ namespace RaycasterInWF {
 				float unitX = currentX - MathF.Floor(currentX);
 				float unitY = currentY - MathF.Floor(currentY);
 
+				// correcting the ending position of the ray that hit a wall to be exactly at the line
+				// between the wall and nothing
 				if (horiVerWall == 'h') {
 					if (unitX < 0.05f) {
 						currentX = MathF.Floor(currentX);
@@ -102,6 +109,7 @@ namespace RaycasterInWF {
 				endX = currentX;
 				endY = currentY;
 
+				// calculating the length now with corrected end and start position
 				length = MathF.Sqrt(MathF.Pow(startX - endX, 2) + MathF.Pow(startY - endY, 2));
 			}
 

@@ -10,6 +10,7 @@ namespace RaycasterInWF
 		public Form1() {
 			InitializeComponent();
 
+			// setting up the game
 			gs = new GameState();
 
 			this.DoubleBuffered = true;
@@ -54,10 +55,12 @@ namespace RaycasterInWF
 			sw.Restart();
 
 			Graphics g = e.Graphics;
+			// the most primitive interpolation mode to get the fastest results
 			g.InterpolationMode = InterpolationMode.NearestNeighbor;
 
 			g.Clear(Color.Black);
 
+			// render walls and entities
 			renderer.Render(g);
 
 			sw.Stop();
@@ -77,6 +80,7 @@ namespace RaycasterInWF
 			if (keys.Contains(Keys.Left)) {
 				gs.player.headingAngle -= 0.02f * dt;
 				gs.player.NormaliseHeading();
+					
 			}
 
 			if (keys.Contains(Keys.Right)) {
@@ -85,10 +89,7 @@ namespace RaycasterInWF
 			}
 
 			if (keys.Contains(Keys.Up)) {
-				//
 				// move with wall sliding
-				//
-
 				if (gs.MapAt((int)(gs.player.position.X + MathF.Cos(gs.player.headingAngle) / 50 * dt), (int)gs.player.position.Y) == 0) {
 					gs.player.position.X = gs.player.position.X + MathF.Cos(gs.player.headingAngle) / 50 * dt;
 				}
@@ -96,10 +97,7 @@ namespace RaycasterInWF
 					gs.player.position.Y = gs.player.position.Y + MathF.Sin(gs.player.headingAngle) / 50 * dt;
 				}
 
-				//
 				// check if ladder in front
-				//
-
 				if (new Ray(gs.player.position.X, gs.player.position.Y, gs.player.headingAngle, 10, 0.01f, gs).CastRay().wallTypeHit == 2) {
 					gs.currentLevel++;
 					gs.lvl = new Level(gs.currentLevel);
@@ -109,10 +107,7 @@ namespace RaycasterInWF
 			}
 
 			if (keys.Contains(Keys.Down)) {
-				//
 				// move with wall sliding
-				//
-
 				if (gs.MapAt((int)(gs.player.position.X - MathF.Cos(gs.player.headingAngle) / 50 * dt), (int)gs.player.position.Y) == 0) {
 					gs.player.position.X = gs.player.position.X - MathF.Cos(gs.player.headingAngle) / 50 * dt;
 				}
@@ -121,12 +116,15 @@ namespace RaycasterInWF
 				}
 			}
 
+			// sort entites by their distance to player
 			gs.SortEntities();
 
+			// display score level information etc
 			l_score.Text = (gs.score).ToString();
 			l_level.Text = (gs.currentLevel + 1).ToString();
 			l_playerPos.Text = $"x: {gs.player.position.X} y: {gs.player.position.Y}";
 
+			// primitive muzzle flash from shooting with just more light 
 			if (gs.player.shot) {
 				gs.shootLightTimer--;
 			}

@@ -10,9 +10,13 @@ namespace RaycasterInWF {
 		public Renderer(GameState gameState, Size clientSize) {
 			gs = gameState;
 			ClientSize = clientSize;
-
-			wallTextures = Image.FromFile("textures/wallTextures.png");
-			entityTextures = Image.FromFile("textures/entityTextures.png");
+			
+			if (File.Exists("textures/wallTextures.png")) {
+				wallTextures = Image.FromFile("textures/wallTextures.png");
+			}
+			if (File.Exists("textures/entityTextures.png")) {
+				entityTextures = Image.FromFile("textures/entityTextures.png");
+			}
 
 			zBuffer = new float[ClientSize.Width + 1];
 		}
@@ -39,6 +43,8 @@ namespace RaycasterInWF {
 			int column = 0;
 
 			for (float a = gs.player.headingAngle - Player.fov / 2; a < gs.player.headingAngle + Player.fov / 2; a += Player.fov / ClientSize.Width) {
+				// casting a new ray from the player position with the max steps 200, a step of 0.05f
+				// and with angle a
 				Ray ray = new Ray(gs.player.position.X, gs.player.position.Y, a, 200, 0.05f, gs);
 				ray = ray.CastRay();
 
@@ -46,17 +52,20 @@ namespace RaycasterInWF {
 
 				int offset = 0;
 
+				// calculating column height
 				if (ray.length > 0) {
 					columnHeight = (int)((float)ClientSize.Height / (ray.length * MathF.Cos(a - gs.player.headingAngle)));
 				}
 
 				int columnY = ClientSize.Height / 2 - columnHeight / 2;
 
+				// if the column starts off screen
 				if (columnY < 0) {
 					offset = (int)MathF.Abs(columnY / (columnHeight / textureSize) / 2);
 				}
 
 				if (ray.hitWall) {
+					// rectangle from the texture pallette
 					Rectangle source = new Rectangle(1, offset, 1, textureSize - offset * 2);
 
 					if (ray.horiVerWall == 'v') {
@@ -66,13 +75,16 @@ namespace RaycasterInWF {
 						source.X = (ray.wallTypeHit - 1) * textureSize + (int)((ray.endX - MathF.Floor(ray.endX)) * textureSize);
 					}
 
+					// rectangle where to print on screen
 					Rectangle destination = new Rectangle(column, columnY, 1, columnHeight);
 
+					// low level lighting using Gamma
 					ImageAttributes attr = new ImageAttributes();
 					attr.SetGamma((float)gs.lightLevel * ray.length > 6f ? (float)gs.lightLevel * ray.length : (gs.player.shot ? 3f : 6f));
 
 					g.DrawImage(wallTextures, destination, source.X, source.Y, source.Width, source.Height, GraphicsUnit.Pixel, attr);
 
+					// saving the distance of each column for further use in rendering entities
 					zBuffer[column] = ray.length;
 				}
 
@@ -89,16 +101,13 @@ namespace RaycasterInWF {
 				// realtive angle between player heading and entity
 				float angleEntityToPlayer = MathF.PI / 2 + gs.player.headingAngle + MathF.Atan(dx / dy);
 
-				//             |
-				// NESAHAT !!! V
+				// corection if the players y is less than entity y
 				if (entity.position.Y > gs.player.position.Y) {
 					dy = gs.player.position.Y - entity.position.Y;
 					dx = gs.player.position.X - entity.position.X;
 
 					angleEntityToPlayer = -MathF.PI / 2 + gs.player.headingAngle + MathF.Atan(dx / dy);
 				}
-				// NESAHAT !!! A
-				//             |
 
 				// normalisation of relative angle
 				if (angleEntityToPlayer < -MathF.PI) {

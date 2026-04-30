@@ -20,6 +20,7 @@ namespace RaycasterInWF {
 
 		public bool shot = false;
 
+		// normalising angle of player to be between -PI and +PI
 		public void NormaliseHeading() {
 			if (headingAngle < -MathF.PI) {
 				headingAngle += 2 * MathF.PI;
@@ -32,19 +33,20 @@ namespace RaycasterInWF {
 		public void Shoot(GameState gs) {
 			shot = true;
 
-			List<Entity> rE = gs.lvl.entities;
-
 			float step = 0.5f;
 
+			// calculating step size on both axis
 			float stepX = step * MathF.Cos(headingAngle);
 			float stepY = step * MathF.Sin(headingAngle);
 
+			// bullet rectangle
 			RectangleF bullet = new RectangleF(position.X, position.Y, 0.5f, 0.5f);
 
 			bool bulletHit = false;
 
 			for (int i = 0; i < 10; i++) {
 				foreach (Entity e in gs.lvl.entities) {
+					// checking if the bullet intersects with entity
 					if (bullet.IntersectsWith(e.boundingBox) && e.type == 0) {
 						e.type = 1;
 
@@ -55,7 +57,8 @@ namespace RaycasterInWF {
 					}
 				}
 
-				if (gs.MapAt((int)bullet.X, (int)bullet.Y) > 0) {
+				// if the bullet hits a wall end
+				if (gs.MapAt((int)(bullet.X + bullet.Width / 2), (int)(bullet.Y + bullet.Height / 2)) > 0) {
 					bulletHit = true;
 				}
 				else {

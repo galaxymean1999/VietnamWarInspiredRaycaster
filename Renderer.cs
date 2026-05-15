@@ -39,8 +39,6 @@ namespace RaycasterInWF {
 		public void Render(Graphics g) {
 			DrawWalls(g);
 			DrawEntities(g);
-
-			//DrawMinimap();
 		}
 
 		private void DrawWalls(Graphics g) {
@@ -169,7 +167,7 @@ namespace RaycasterInWF {
 			}
 		}
 
-		private void DrawMinimap() {
+		/*private void DrawMinimap() {
             Graphics g = Graphics.FromImage(screen);
 
             for (int y = 0; y < gs.lvl.mapHeight; y++) {
@@ -181,6 +179,6 @@ namespace RaycasterInWF {
 			}
 
 			g.FillEllipse(Brushes.Red, gs.player.position.X * 10, gs.player.position.Y * 10, 2, 2);
-		}
+		}*/
 	}
 }

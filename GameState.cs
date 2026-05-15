@@ -15,7 +15,7 @@ namespace RaycasterInWF {
 
 		public Player player = new Player(13.5f, 13.5f);
 
-		public int currentLevel = 1;
+		public int currentLevel = 0;
 
 		public const int tileSize = 1;
 

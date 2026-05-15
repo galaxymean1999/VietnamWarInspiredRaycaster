@@ -37,21 +37,25 @@ namespace RaycasterInWF
         Renderer renderer;
 
         private void Form1_KeyDown(object sender, KeyEventArgs e) {
+            // if the pressed key isn't in the buffer then add it
             if (!keys.Contains(e.KeyCode)) {
                 keys.Add(e.KeyCode);
             }
 
+            // if control then shoot enemies
             if (e.KeyCode == Keys.ControlKey) {
                 gs.player.Shoot(gs, 0);
                 gs.lightLevel = 1;
             }
 
+            // if space then shoot and interact
             if (e.KeyCode == Keys.Space) {
                 gs.player.Shoot(gs, 3);
             }
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e) {
+            // remove key from the buffer
             keys.Remove(e.KeyCode);
         }
 
@@ -141,6 +145,7 @@ namespace RaycasterInWF
                 gs.lightLevel = 4;
             }
 
+            // repaint the canvas
             canvas.Invalidate();
         }
     }

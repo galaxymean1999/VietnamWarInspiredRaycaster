@@ -53,10 +53,10 @@ namespace RaycasterInWF {
 
 			for (int i = 0; i < 10; i++) {
 				foreach (Entity e in gs.lvl.entities) {
-					// checking if the bullet intersects with entity
+					// checking if the bullet intersects with an entity
 					if (bullet.IntersectsWith(e.boundingBox)) {
-
 						switch (e.type) {
+							// intersects with an enemy
 							case 0:
                                 e.type = 1;
 
@@ -64,11 +64,15 @@ namespace RaycasterInWF {
 
                                 bulletHit = true;
                                 break;
+
+							// intersects with a chest
 							case 2:
+								// if out of range skip it
 								if (i > interactionSteps) {
 									continue;
 								}
 
+								// random chance to get your health to 1
 								int da = Random.Shared.Next(1, 100);
 
 								if (da >= 60) {

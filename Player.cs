@@ -10,6 +10,8 @@ namespace RaycasterInWF {
 		public Player(float x, float y) {
 			position.X = x;
 			position.Y = y;
+
+			health = 100;
 		}
 
 		public Vector2 position;
@@ -19,6 +21,8 @@ namespace RaycasterInWF {
 		public float headingAngle = MathF.PI;
 
 		public bool shot = false;
+
+		public int health;
 
 		// normalising angle of player to be between -PI and +PI
 		public void NormaliseHeading() {
@@ -30,8 +34,11 @@ namespace RaycasterInWF {
 			}
 		}
 
-		public void Shoot(GameState gs) {
+		public void Shoot(GameState gs, int interactionSteps) {
 			shot = true;
+			if (interactionSteps > 0) {
+				shot = false;
+			}
 
 			float step = 0.5f;
 
@@ -47,12 +54,30 @@ namespace RaycasterInWF {
 			for (int i = 0; i < 10; i++) {
 				foreach (Entity e in gs.lvl.entities) {
 					// checking if the bullet intersects with entity
-					if (bullet.IntersectsWith(e.boundingBox) && e.type == 0) {
-						e.type = 1;
+					if (bullet.IntersectsWith(e.boundingBox)) {
 
-						gs.score += 100;
+						switch (e.type) {
+							case 0:
+                                e.type = 1;
 
-						bulletHit = true;
+                                gs.score += 100;
+
+                                bulletHit = true;
+                                break;
+							case 2:
+								if (i > interactionSteps) {
+									continue;
+								}
+
+								int da = Random.Shared.Next(1, 100);
+
+								if (da >= 60) {
+									health = 1;
+								}
+
+								bulletHit = true;
+								break;
+						}
 						break;
 					}
 				}

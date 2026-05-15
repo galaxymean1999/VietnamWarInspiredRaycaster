@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 namespace RaycasterInWF {
 	public class Level {
 		public Level(int current) {
-			LoadLevel(current);
+            map = new int[] { };
+
+            LoadLevel(current);
 
 			entities = LoadEntities(current);
 		}
@@ -85,6 +87,9 @@ namespace RaycasterInWF {
 					entityList.Add(new Entity(6.5f, 13.5f, 1));
 
 					entityList.Add(new Entity(4.5f, 9.5f, 0));
+
+
+					entityList.Add(new Entity(1.5f, 7.5f, 2));
 					break;
 			}
 

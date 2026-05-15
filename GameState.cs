@@ -15,7 +15,7 @@ namespace RaycasterInWF {
 
 		public Player player = new Player(13.5f, 13.5f);
 
-		public int currentLevel = 0;
+		public int currentLevel = 1;
 
 		public const int tileSize = 1;
 
@@ -28,7 +28,7 @@ namespace RaycasterInWF {
 
 		// checks what is on the map at x and y coordinates
 		public int MapAt(int x, int y) {
-			if (x < lvl.mapWidth && y < lvl.mapHeight) {
+			if (x < lvl.mapWidth && y < lvl.mapHeight && x >= 0 && y >= 0) {
 				return lvl.map[(int)(y / tileSize) * lvl.mapWidth + (int)(x / tileSize)];
 			}
 			else {

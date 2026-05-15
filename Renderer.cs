@@ -14,11 +14,13 @@ namespace RaycasterInWF {
 			if (File.Exists("textures/wallTextures.png")) {
 				wallTextures = Image.FromFile("textures/wallTextures.png");
 			}
-			if (File.Exists("textures/entityTextures.png")) {
+            if (File.Exists("textures/entityTextures.png")) {
 				entityTextures = Image.FromFile("textures/entityTextures.png");
 			}
 
 			zBuffer = new float[ClientSize.Width + 1];
+
+			screen = new Bitmap(clientSize.Width, clientSize.Height);
 		}
 
 		private GameState gs;
@@ -32,11 +34,13 @@ namespace RaycasterInWF {
 
 		private const int textureSize = 32;
 
+		private Bitmap screen;
+
 		public void Render(Graphics g) {
 			DrawWalls(g);
 			DrawEntities(g);
 
-			//DrawMinimap(g);
+			//DrawMinimap();
 		}
 
 		private void DrawWalls(Graphics g) {
@@ -50,8 +54,6 @@ namespace RaycasterInWF {
 
 				int columnHeight = 0;
 
-				int offset = 0;
-
 				// calculating column height
 				if (ray.length > 0) {
 					columnHeight = (int)((float)ClientSize.Height / (ray.length * MathF.Cos(a - gs.player.headingAngle)));
@@ -59,14 +61,9 @@ namespace RaycasterInWF {
 
 				int columnY = ClientSize.Height / 2 - columnHeight / 2;
 
-				// if the column starts off screen
-				if (columnY < 0) {
-					offset = (int)MathF.Abs(columnY / (columnHeight / textureSize) / 2);
-				}
-
 				if (ray.hitWall) {
 					// rectangle from the texture pallette
-					Rectangle source = new Rectangle(1, offset, 1, textureSize - offset * 2);
+					Rectangle source = new Rectangle(1, 0, 1, textureSize);
 
 					if (ray.horiVerWall == 'v') {
 						source.X = (ray.wallTypeHit - 1) * textureSize + (int)((ray.endY - MathF.Floor(ray.endY)) * textureSize);
@@ -93,7 +90,7 @@ namespace RaycasterInWF {
 		}
 
 		private void DrawEntities(Graphics g) {
-			foreach (Entity entity in gs.lvl.entities) {
+            foreach (Entity entity in gs.lvl.entities) {
 				// distance along x and y
 				float dx = entity.position.X - gs.player.position.X;
 				float dy = entity.position.Y - gs.player.position.Y;
@@ -101,7 +98,7 @@ namespace RaycasterInWF {
 				// realtive angle between player heading and entity
 				float angleEntityToPlayer = MathF.PI / 2 + gs.player.headingAngle + MathF.Atan(dx / dy);
 
-				// corection if the players y is less than entity y
+				// corection if the player y is less than entity y
 				if (entity.position.Y > gs.player.position.Y) {
 					dy = gs.player.position.Y - entity.position.Y;
 					dx = gs.player.position.X - entity.position.X;
@@ -127,9 +124,6 @@ namespace RaycasterInWF {
 					if (angleEntityToPlayer >= -Player.fov / 2 && angleEntityToPlayer <= Player.fov / 2) {
 						// calculate height of entity
 						int height = (int)(ClientSize.Height / (entity.distance));
-						if (height > ClientSize.Height) {
-							height = ClientSize.Height;
-						}
 
 						int width = height;
 
@@ -163,7 +157,6 @@ namespace RaycasterInWF {
 										attr.SetGamma((float)0.5f * entity.distance > 1f ? (float)0.5f * entity.distance : 1f);
 									}
 
-
 									g.DrawImage(entityTextures, destination, source.X, source.Y, source.Width, source.Height, GraphicsUnit.Pixel, attr);
 								}
 								else {
@@ -176,8 +169,10 @@ namespace RaycasterInWF {
 			}
 		}
 
-		private void DrawMinimap(Graphics g) {
-			for (int y = 0; y < gs.lvl.mapHeight; y++) {
+		private void DrawMinimap() {
+            Graphics g = Graphics.FromImage(screen);
+
+            for (int y = 0; y < gs.lvl.mapHeight; y++) {
 				for (int x = 0; x < gs.lvl.mapWidth; x++) {
 					if (gs.MapAt(x, y) >= 1) {
 						g.FillRectangle(Brushes.Gray, x * 10, y * 10, 10, 10);

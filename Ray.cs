@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace RaycasterInWF {
 			this.gs = gs;
 		}
 
-		private int maxSteps;
+		public int maxSteps;
 		private float stepSize;
 
 		private GameState gs;
@@ -114,6 +115,32 @@ namespace RaycasterInWF {
 			}
 
 			return this;
+		}
+
+		public Entity CastEntityRay(float boundingBoxSize) {
+			// calculating step size on both axis
+			float stepX = stepSize * MathF.Cos(angle);
+			float stepY = stepSize * MathF.Sin(angle);
+
+			// bullet rectangle
+			RectangleF rayBox = new RectangleF(startX - boundingBoxSize / 2, startY - boundingBoxSize / 2, boundingBoxSize, boundingBoxSize);
+
+			for (int i = 0; i < maxSteps; i++) {
+				foreach (Entity e in gs.lvl.entities) {
+					if (e.boundingBox.IntersectsWith(rayBox)) {
+						return e;
+					}
+				}
+
+				rayBox.X += stepX;
+				rayBox.Y += stepY;
+
+				if (gs.MapAt((int)rayBox.X, (int)rayBox.Y) != 0) {
+					break;
+				}
+			}
+
+			return null;
 		}
 	}
 }

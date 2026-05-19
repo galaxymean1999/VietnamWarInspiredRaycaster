@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace RaycasterInWF {
 	public class Player {
@@ -24,6 +25,8 @@ namespace RaycasterInWF {
 
 		public int health;
 
+		private float reach = 1.5f;
+
 		// normalising angle of player to be between -PI and +PI
 		public void NormaliseHeading() {
 			if (headingAngle < -MathF.PI) {
@@ -34,69 +37,46 @@ namespace RaycasterInWF {
 			}
 		}
 
-		public void Shoot(GameState gs, int interactionSteps) {
-			shot = true;
-			if (interactionSteps > 0) {
-				shot = false;
-			}
+		public void Interact(GameState gs) {
+			Ray ray = new Ray(position.X, position.Y, headingAngle, (int)(reach / 0.5f), 0.5f, gs);
 
-			float step = 0.5f;
+			int index = gs.lvl.entities.IndexOf(ray.CastEntityRay(0.5f));
 
-			// calculating step size on both axis
-			float stepX = step * MathF.Cos(headingAngle);
-			float stepY = step * MathF.Sin(headingAngle);
-
-			// bullet rectangle
-			RectangleF bullet = new RectangleF(position.X, position.Y, 0.5f, 0.5f);
-
-			bool bulletHit = false;
-
-			for (int i = 0; i < 10; i++) {
-				foreach (Entity e in gs.lvl.entities) {
-					// checking if the bullet intersects with an entity
-					if (bullet.IntersectsWith(e.boundingBox)) {
-						switch (e.type) {
-							// intersects with an enemy
-							case 0:
-                                e.type = 1;
-
-                                gs.score += 100;
-
-                                bulletHit = true;
-                                break;
-
-							// intersects with a chest
-							case 2:
-								// if out of range skip it
-								if (i > interactionSteps) {
-									continue;
-								}
-
-								// random chance to get your health to 1
-								int da = Random.Shared.Next(1, 100);
-
-								if (da >= 60) {
-									health = 1;
-								}
-
-								bulletHit = true;
-								break;
+			// if entity was hit
+			if (index >= 0) {
+				switch (gs.lvl.entities[index].type) {
+					// chest
+					case 2:
+						if (Random.Shared.Next(0, 100) <= 40) {
+							health = 0;
 						}
+						else {
+							gs.score += 250;
+						}
+
+						// to do: change sprite to an opened chest
 						break;
-					}
+					default:
+						break;
 				}
+			}
+			
+		}
 
-				// if the bullet hits a wall end
-				if (gs.MapAt((int)(bullet.X + bullet.Width / 2), (int)(bullet.Y + bullet.Height / 2)) > 0) {
-					bulletHit = true;
-				}
-				else {
-					bullet.X += stepX;
-					bullet.Y += stepY;
-				}
+		public void Shoot(GameState gs) {
+			shot = true;
+			
+			gs.lightLevel = 1;
 
-				if (bulletHit) {
-					break;
+			Ray ray = new Ray(position.X, position.Y, headingAngle, 12, 0.5f, gs);
+
+			int index = gs.lvl.entities.IndexOf(ray.CastEntityRay(0.5f));
+
+			// check if an entity was hit
+			if (index >= 0) {
+				if (gs.lvl.entities[index].type == 0) {
+					gs.lvl.entities[index].type = 1;
+					gs.score += 100;
 				}
 			}
 		}

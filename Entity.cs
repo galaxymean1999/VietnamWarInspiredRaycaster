@@ -24,8 +24,8 @@ namespace RaycasterInWF {
 		public int type;
 
 		public	void UpdateEntity() {
-			boundingBox.X = this.position.X;
-			boundingBox.Y = this.position.Y;
+			boundingBox.X = this.position.X - 0.5f;
+			boundingBox.Y = this.position.Y - 0.5f;
 		}
 	}
 }

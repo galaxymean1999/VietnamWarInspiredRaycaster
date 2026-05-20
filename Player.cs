@@ -13,12 +13,14 @@ namespace RaycasterInWF {
 			position.Y = y;
 
 			health = 100;
+
+			headingAngle = MathF.PI;
 		}
 
 		public Vector2 position;
 
 		public const float fov = MathF.PI / 3;
-		public float headingAngle = MathF.PI;
+		public float headingAngle;
 
 		public float movementSpeed = 2f;
 		public float rotationSpeed = 1.2f;

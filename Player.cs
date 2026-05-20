@@ -67,7 +67,7 @@ namespace RaycasterInWF {
 				switch (gs.lvl.entities[index].type) {
 					// chest
 					case 2:
-						if (Random.Shared.Next(0, 40) <= 40) {
+						if (Random.Shared.Next(0, 100) <= 40) {
 							health = 0;
 						}
 						else {

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace RaycasterInWF {
 	public class Level {
-		public Level(int current) {
+		public Level(int id) {
             map = new int[] { };
 
-            LoadLevel(current);
+            LoadLevelID(id);
 
-			entities = LoadEntities(current);
+			entities = LoadEntities(id);
 		}
 
 		public int[] map;
@@ -21,8 +21,8 @@ namespace RaycasterInWF {
 
 		public List<Entity> entities;
 
-		void LoadLevel(int lvl) {
-			switch (lvl) {
+		private void LoadLevelID(int id) {
+			switch (id) {
 				case 0:
 					map = new [] {
 						1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,

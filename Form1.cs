@@ -3,6 +3,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Numerics;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace RaycasterInWF
 {
@@ -22,8 +23,6 @@ namespace RaycasterInWF
 			l_score.Text = (gs.score).ToString();
 
 			renderer = new Renderer(gs, canvas.ClientSize);
-
-			sw.Start();
 		}
 
 		private GameState gs;
@@ -31,8 +30,6 @@ namespace RaycasterInWF
 		private List<Keys> keys = new List<Keys>();
 
 		private float dt = 1;
-
-		private Stopwatch sw = new Stopwatch();
 
 		Renderer renderer;
 
@@ -42,16 +39,14 @@ namespace RaycasterInWF
 				keys.Add(e.KeyCode);
 			}
 
-			if (e.KeyCode == Keys.Space || e.KeyCode == Keys.ControlKey) {
-				// if control pressed then shoot enemies
-				if (e.KeyCode == Keys.ControlKey) {
-					gs.player.Shoot(gs);
-				}
+			// if control pressed then shoot
+			if (e.KeyCode == Keys.ControlKey) {
+				gs.player.Shoot(gs);
+			}
 
-				// if space pressed then interact with the entity that is in range in front of the player
-				if (e.KeyCode == Keys.Space) {
-					gs.player.Interact(gs);
-				}
+			// if space pressed then interact with entities
+			if (e.KeyCode == Keys.Space) {
+				gs.player.Interact(gs);
 			}
 		}
 
@@ -61,7 +56,7 @@ namespace RaycasterInWF
 		}
 
 		private void Draw(object sender, PaintEventArgs e) {
-			sw.Restart();
+			DateTime timeBefore = DateTime.Now;
 
 			Graphics g = e.Graphics;
 			// the most primitive interpolation mode to get the fastest results
@@ -72,9 +67,11 @@ namespace RaycasterInWF
 			// render walls and entities
 			renderer.Render(g);
 
-			sw.Stop();
+			dt = (DateTime.Now.Millisecond - timeBefore.Millisecond) / 1000.0f;
 
-			dt = sw.ElapsedMilliseconds / 10;
+			if (dt <= 0) {
+				dt = 0;
+			}
 		}
 
 		private void Update(object sender, EventArgs e) {
@@ -87,23 +84,23 @@ namespace RaycasterInWF
 			//
 
 			if (keys.Contains(Keys.Left)) {
-				gs.player.headingAngle -= 0.02f * dt;
+				gs.player.headingAngle -= gs.player.rotationSpeed * dt;
 				gs.player.NormaliseHeading();
 
 			}
 
 			if (keys.Contains(Keys.Right)) {
-				gs.player.headingAngle += 0.02f * dt;
+				gs.player.headingAngle += gs.player.rotationSpeed * dt;
 				gs.player.NormaliseHeading();
 			}
 
 			if (keys.Contains(Keys.Up)) {
 				// move with wall sliding
-				if (gs.MapAt((int)(gs.player.position.X + MathF.Cos(gs.player.headingAngle) / 50 * dt), (int)gs.player.position.Y) == 0) {
-					gs.player.position.X = gs.player.position.X + MathF.Cos(gs.player.headingAngle) / 50 * dt;
+				if (gs.MapAt((int)(gs.player.position.X + MathF.Cos(gs.player.headingAngle) * gs.player.movementSpeed * dt), (int)gs.player.position.Y) == 0) {
+					gs.player.position.X = gs.player.position.X + MathF.Cos(gs.player.headingAngle) * gs.player.movementSpeed * dt;
 				}
-				if (gs.MapAt((int)gs.player.position.X, (int)(gs.player.position.Y + MathF.Sin(gs.player.headingAngle) / 50 * dt)) == 0) {
-					gs.player.position.Y = gs.player.position.Y + MathF.Sin(gs.player.headingAngle) / 50 * dt;
+				if (gs.MapAt((int)gs.player.position.X, (int)(gs.player.position.Y + MathF.Sin(gs.player.headingAngle) * gs.player.movementSpeed * dt)) == 0) {
+					gs.player.position.Y = gs.player.position.Y + MathF.Sin(gs.player.headingAngle) * gs.player.movementSpeed * dt;
 				}
 
 				// check if ladder in front
@@ -117,16 +114,13 @@ namespace RaycasterInWF
 
 			if (keys.Contains(Keys.Down)) {
 				// move with wall sliding
-				if (gs.MapAt((int)(gs.player.position.X - MathF.Cos(gs.player.headingAngle) / 50 * dt), (int)gs.player.position.Y) == 0) {
-					gs.player.position.X = gs.player.position.X - MathF.Cos(gs.player.headingAngle) / 50 * dt;
+				if (gs.MapAt((int)(gs.player.position.X - MathF.Cos(gs.player.headingAngle) * gs.player.movementSpeed * dt), (int)gs.player.position.Y) == 0) {
+					gs.player.position.X = gs.player.position.X - MathF.Cos(gs.player.headingAngle) * gs.player.movementSpeed * dt;
 				}
-				if (gs.MapAt((int)gs.player.position.X, (int)(gs.player.position.Y - MathF.Sin(gs.player.headingAngle) / 50 * dt)) == 0) {
-					gs.player.position.Y = gs.player.position.Y - MathF.Sin(gs.player.headingAngle) / 50 * dt;
+				if (gs.MapAt((int)gs.player.position.X, (int)(gs.player.position.Y - MathF.Sin(gs.player.headingAngle) * gs.player.movementSpeed * dt)) == 0) {
+					gs.player.position.Y = gs.player.position.Y - MathF.Sin(gs.player.headingAngle) * gs.player.movementSpeed * dt;
 				}
 			}
-
-			// sort entites by their distance to player
-			gs.SortEntities();
 
 			// display score level information etc
 			l_score.Text = (gs.score).ToString();
@@ -134,17 +128,9 @@ namespace RaycasterInWF
 			l_health.Text = (gs.player.health).ToString();
 
 			// player position for debug pusposes
-			l_playerPos.Text = $"x: {gs.player.position.X} y: {gs.player.position.Y}";
+			l_playerPos.Text = $"x: {MathF.Round(gs.player.position.X, 2)} y: {MathF.Round(gs.player.position.Y, 2)} dt: {MathF.Round(dt, 3)}";
 
-			// primitive muzzle flash from shooting with just more light 
-			if (gs.player.shot) {
-				gs.shootLightTimer--;
-			}
-			if (gs.shootLightTimer < 0) {
-				gs.player.shot = false;
-				gs.shootLightTimer = 5;
-				gs.lightLevel = 4;
-			}
+			gs.Update();
 
 			// repaint the canvas
 			canvas.Invalidate();

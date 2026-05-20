@@ -126,15 +126,19 @@ namespace RaycasterInWF {
 			RectangleF rayBox = new RectangleF(startX - boundingBoxSize / 2, startY - boundingBoxSize / 2, boundingBoxSize, boundingBoxSize);
 
 			for (int i = 0; i < maxSteps; i++) {
+				// for every entitiy check if it has been hit
 				foreach (Entity e in gs.lvl.entities) {
+					// if hit then return the entity that has been hit
 					if (e.boundingBox.IntersectsWith(rayBox)) {
 						return e;
 					}
 				}
 
+				// add the step size to the position of the rectangle
 				rayBox.X += stepX;
 				rayBox.Y += stepY;
 
+				// if hit a wall then break the loop and return null
 				if (gs.MapAt((int)rayBox.X, (int)rayBox.Y) != 0) {
 					break;
 				}

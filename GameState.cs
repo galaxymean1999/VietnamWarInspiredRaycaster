@@ -23,7 +23,7 @@ namespace RaycasterInWF {
 
 		public int shootLightTimer = 5;
 
-		// light level - bigger is less light
+		// light level - larger number is less light
 		public int lightLevel = 4;
 
 		// checks what is on the map at x and y coordinates
@@ -36,7 +36,8 @@ namespace RaycasterInWF {
 			}
 		}
 
-		public void SortEntities() {
+		// sort entites by their distance to player to have the correct order of entities
+		private void SortEntities() {
 			// calculate distances to player
 			foreach (Entity entity in lvl.entities) {
 				entity.distance = MathF.Sqrt(MathF.Pow(player.position.X - entity.position.X, 2) + MathF.Pow(player.position.Y - entity.position.Y, 2));
@@ -44,6 +45,22 @@ namespace RaycasterInWF {
 
 			// sort entities by distance
 			lvl.entities.Sort((a, b) => b.distance.CompareTo(a.distance));
+		}
+
+		public void Update() {
+			player.Update(this);
+
+			SortEntities();
+
+			// primitive muzzle flash from shooting with just more light 
+			if (player.shot) {
+				shootLightTimer--;
+			}
+			if (shootLightTimer < 0) {
+				player.shot = false;
+				shootLightTimer = 5;
+				lightLevel = 4;
+			}
 		}
 	}
 }

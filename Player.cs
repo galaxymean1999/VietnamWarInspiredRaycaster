@@ -18,14 +18,15 @@ namespace RaycasterInWF {
 		public Vector2 position;
 
 		public const float fov = MathF.PI / 3;
-
 		public float headingAngle = MathF.PI;
+
+		public float movementSpeed = 2f;
+		public float rotationSpeed = 1.2f;
+		private float reach = 1.5f;
 
 		public bool shot = false;
 
 		public int health;
-
-		private float reach = 1.5f;
 
 		// normalising angle of player to be between -PI and +PI
 		public void NormaliseHeading() {
@@ -37,6 +38,23 @@ namespace RaycasterInWF {
 			}
 		}
 
+		public void Update(GameState gs) {
+			// check if the players health is too low
+			// if the health is too low then restart the level and get the score to 0
+			if (health <= 0) {
+				position.X = 13.5f;
+				position.Y = 13.5f;
+
+				health = 100;
+
+				gs.lvl = new Level(gs.currentLevel);
+
+				gs.score = 0;
+			}
+		}
+
+		// interact with other entities for example chests by casting a ray that checks if an entity is in front of the player
+		// and in reach of the player
 		public void Interact(GameState gs) {
 			Ray ray = new Ray(position.X, position.Y, headingAngle, (int)(reach / 0.5f), 0.5f, gs);
 
@@ -47,14 +65,14 @@ namespace RaycasterInWF {
 				switch (gs.lvl.entities[index].type) {
 					// chest
 					case 2:
-						if (Random.Shared.Next(0, 100) <= 40) {
+						if (Random.Shared.Next(0, 40) <= 40) {
 							health = 0;
 						}
 						else {
 							gs.score += 250;
-						}
 
-						// to do: change sprite to an opened chest
+							gs.lvl.entities[index].type = 3;
+						}
 						break;
 					default:
 						break;
@@ -63,6 +81,8 @@ namespace RaycasterInWF {
 			
 		}
 
+		// shoot by casting a ray that checks if an entity has been hit in a range of the weapon
+		// if an entity was hit then score is added and the entity is changed to a dead enemy
 		public void Shoot(GameState gs) {
 			shot = true;
 			

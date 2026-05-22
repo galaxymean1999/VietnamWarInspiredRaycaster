@@ -15,7 +15,7 @@ namespace RaycasterInWF {
 
 		public Player player = new Player(13.5f, 13.5f);
 
-		public int currentLevel = 1;
+		public int currentLevel = 0;
 
 		public const int tileSize = 1;
 
@@ -51,6 +51,15 @@ namespace RaycasterInWF {
 			player.Update(this);
 
 			SortEntities();
+
+			// add player to the entity list for checking if the player was hit by an enemy
+			lvl.entities.Add(new Entity(player.position.X, player.position.Y, 100));
+
+			foreach (Entity e in lvl.entities) {
+				e.Update(this);
+			}
+
+			lvl.entities.RemoveAt(lvl.entities.Count - 1);
 
 			// primitive muzzle flash from shooting with just more light 
 			if (player.shot) {

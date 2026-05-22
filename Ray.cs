@@ -117,7 +117,7 @@ namespace RaycasterInWF {
 			return this;
 		}
 
-		public Entity CastEntityRay(float boundingBoxSize) {
+		public Entity CastEntityRay(float boundingBoxSize, Entity shooter = null) {
 			// calculating step size on both axis
 			float stepX = stepSize * MathF.Cos(angle);
 			float stepY = stepSize * MathF.Sin(angle);
@@ -128,6 +128,10 @@ namespace RaycasterInWF {
 			for (int i = 0; i < maxSteps; i++) {
 				// for every entitiy check if it has been hit
 				foreach (Entity e in gs.lvl.entities) {
+					// skip the entity that casts the ray
+					if (e == shooter) {
+						continue;
+					}
 					// if hit then return the entity that has been hit
 					if (e.boundingBox.IntersectsWith(rayBox)) {
 						return e;
@@ -139,7 +143,7 @@ namespace RaycasterInWF {
 				rayBox.Y += stepY;
 
 				// if hit a wall then break the loop and return null
-				if (gs.MapAt((int)rayBox.X, (int)rayBox.Y) != 0) {
+				if (gs.MapAt((int)(rayBox.X + rayBox.Width / 2.0f), (int)(rayBox.Y + rayBox.Height / 2.0f)) != 0) {
 					break;
 				}
 			}

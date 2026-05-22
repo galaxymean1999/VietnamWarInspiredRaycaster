@@ -30,8 +30,6 @@
             components = new System.ComponentModel.Container();
             updateTimer = new System.Windows.Forms.Timer(components);
             hudPanel = new Panel();
-            l_lifes = new Label();
-            l_lifesHeading = new Label();
             l_health = new Label();
             l_healthHeading = new Label();
             l_score = new Label();
@@ -54,8 +52,6 @@
             // 
             hudPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             hudPanel.BackColor = Color.FromArgb(0, 64, 0);
-            hudPanel.Controls.Add(l_lifes);
-            hudPanel.Controls.Add(l_lifesHeading);
             hudPanel.Controls.Add(l_health);
             hudPanel.Controls.Add(l_healthHeading);
             hudPanel.Controls.Add(l_score);
@@ -66,31 +62,6 @@
             hudPanel.Name = "hudPanel";
             hudPanel.Size = new Size(624, 71);
             hudPanel.TabIndex = 0;
-            // 
-            // l_lifes
-            // 
-            l_lifes.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            l_lifes.BackColor = Color.Transparent;
-            l_lifes.Font = new Font("Segoe UI", 15F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            l_lifes.ForeColor = Color.White;
-            l_lifes.Location = new Point(337, 28);
-            l_lifes.Name = "l_lifes";
-            l_lifes.Size = new Size(67, 28);
-            l_lifes.TabIndex = 8;
-            l_lifes.Text = "0";
-            l_lifes.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // l_lifesHeading
-            // 
-            l_lifesHeading.AutoSize = true;
-            l_lifesHeading.BackColor = Color.Transparent;
-            l_lifesHeading.Font = new Font("Segoe UI", 15F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            l_lifesHeading.ForeColor = Color.FromArgb(128, 255, 128);
-            l_lifesHeading.Location = new Point(344, 2);
-            l_lifesHeading.Name = "l_lifesHeading";
-            l_lifesHeading.Size = new Size(60, 28);
-            l_lifesHeading.TabIndex = 7;
-            l_lifesHeading.Text = "LIFES";
             // 
             // l_health
             // 
@@ -222,7 +193,5 @@
         private PictureBox canvas;
         private Label l_health;
         private Label l_healthHeading;
-        private Label l_lifesHeading;
-        private Label l_lifes;
     }
 }

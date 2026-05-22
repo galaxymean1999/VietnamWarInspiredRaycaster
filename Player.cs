@@ -29,8 +29,6 @@ namespace RaycasterInWF {
 
 		public int health;
 
-		public int lifes = 3;
-
 		private float reach = 1.5f;
 
         // normalising angle of player to be between -PI and +PI
@@ -52,13 +50,13 @@ namespace RaycasterInWF {
 
 				health = 100;
 
+				headingAngle = MathF.PI;
+
 				gs.lvl = new Level(gs.currentLevel);
 
 				gs.score = 0;
 
-				lifes--;
-
-				MessageBox.Show("YOU DIED!", "DEATH", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show("YOU DIED!", "DEATH", MessageBoxButtons.OK);
 			}
 		}
 
@@ -75,7 +73,7 @@ namespace RaycasterInWF {
 					// chest
 					case 2:
 						if (Random.Shared.Next(0, 100) <= 40) {
-							health = 0;
+							health -= 30;
 						}
 						else {
 							gs.score += 250;

@@ -79,9 +79,7 @@ namespace RaycasterInWF
 				this.Close();
 			}
 
-			//
 			// movement
-			//
 
 			if (keys.Contains(Keys.Left)) {
 				gs.player.headingAngle -= gs.player.rotationSpeed * dt;
@@ -126,6 +124,7 @@ namespace RaycasterInWF
 			l_score.Text = (gs.score).ToString();
 			l_level.Text = (gs.currentLevel + 1).ToString();
 			l_health.Text = (gs.player.health).ToString();
+			l_lifes.Text = (gs.player.lifes).ToString();
 
 			// player position for debug pusposes
 			l_playerPos.Text = $"x: {MathF.Round(gs.player.position.X, 2)} y: {MathF.Round(gs.player.position.Y, 2)} dt: {MathF.Round(dt, 3)}";

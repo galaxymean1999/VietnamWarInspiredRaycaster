@@ -24,14 +24,17 @@ namespace RaycasterInWF {
 
 		public float movementSpeed = 2f;
 		public float rotationSpeed = 1.2f;
-		private float reach = 1.5f;
-
+		
 		public bool shot = false;
 
 		public int health;
 
-		// normalising angle of player to be between -PI and +PI
-		public void NormaliseHeading() {
+		public int lifes = 3;
+
+		private float reach = 1.5f;
+
+        // normalising angle of player to be between -PI and +PI
+        public void NormaliseHeading() {
 			if (headingAngle < -MathF.PI) {
 				headingAngle += 2 * MathF.PI;
 			}
@@ -52,6 +55,10 @@ namespace RaycasterInWF {
 				gs.lvl = new Level(gs.currentLevel);
 
 				gs.score = 0;
+
+				lifes--;
+
+				MessageBox.Show("YOU DIED!", "DEATH", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 

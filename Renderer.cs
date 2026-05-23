@@ -166,19 +166,5 @@ namespace RaycasterInWF {
 				}
 			}
 		}
-
-		/*private void DrawMinimap() {
-            Graphics g = Graphics.FromImage(screen);
-
-            for (int y = 0; y < gs.lvl.mapHeight; y++) {
-				for (int x = 0; x < gs.lvl.mapWidth; x++) {
-					if (gs.MapAt(x, y) >= 1) {
-						g.FillRectangle(Brushes.Gray, x * 10, y * 10, 10, 10);
-					}
-				}
-			}
-
-			g.FillEllipse(Brushes.Red, gs.player.position.X * 10, gs.player.position.Y * 10, 2, 2);
-		}*/
 	}
 }

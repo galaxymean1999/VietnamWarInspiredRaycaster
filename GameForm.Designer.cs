@@ -1,6 +1,6 @@
 ﻿namespace RaycasterInWF
 {
-    partial class Form1
+    partial class GameForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -36,7 +36,6 @@
             l_level = new Label();
             l_levelHeading = new Label();
             l_scoreHeading = new Label();
-            l_playerPos = new Label();
             canvas = new PictureBox();
             hudPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)canvas).BeginInit();
@@ -138,19 +137,6 @@
             l_scoreHeading.TabIndex = 0;
             l_scoreHeading.Text = "SCORE";
             // 
-            // l_playerPos
-            // 
-            l_playerPos.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            l_playerPos.BackColor = Color.Black;
-            l_playerPos.Font = new Font("Segoe UI", 15F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            l_playerPos.ForeColor = Color.White;
-            l_playerPos.Location = new Point(311, 9);
-            l_playerPos.Name = "l_playerPos";
-            l_playerPos.Size = new Size(301, 28);
-            l_playerPos.TabIndex = 4;
-            l_playerPos.Text = "0";
-            l_playerPos.TextAlign = ContentAlignment.MiddleLeft;
-            // 
             // canvas
             // 
             canvas.BackColor = Color.Black;
@@ -162,19 +148,21 @@
             canvas.TabStop = false;
             canvas.Paint += Draw;
             // 
-            // Form1
+            // GameForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(624, 441);
-            Controls.Add(l_playerPos);
             Controls.Add(hudPanel);
             Controls.Add(canvas);
             MaximizeBox = false;
-            Name = "Form1";
-            Text = "Raycaster";
-            KeyDown += Form1_KeyDown;
-            KeyUp += Form1_KeyUp;
+            MaximumSize = new Size(640, 480);
+            MinimumSize = new Size(640, 480);
+            Name = "GameForm";
+            Text = "Escape from Vietnam 3D";
+            FormClosed += GameForm_FormClosed;
+            KeyDown += GameForm_KeyDown;
+            KeyUp += GameForm_KeyUp;
             hudPanel.ResumeLayout(false);
             hudPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)canvas).EndInit();
@@ -189,7 +177,6 @@
 		private Label l_score;
 		private Label l_level;
 		private Label l_levelHeading;
-		private Label l_playerPos;
         private PictureBox canvas;
         private Label l_health;
         private Label l_healthHeading;

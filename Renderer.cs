@@ -17,6 +17,9 @@ namespace RaycasterInWF {
             if (File.Exists("textures/entityTextures.png")) {
 				entityTextures = Image.FromFile("textures/entityTextures.png");
 			}
+			if (File.Exists("textures/gun.png")) {
+				weaponTexture = Image.FromFile("textures/gun.png");
+			}
 
 			zBuffer = new float[ClientSize.Width + 1];
 
@@ -31,6 +34,7 @@ namespace RaycasterInWF {
 
 		private Image wallTextures;
 		private Image entityTextures;
+		private Image weaponTexture;
 
 		private const int textureSize = 32;
 
@@ -39,6 +43,11 @@ namespace RaycasterInWF {
 		public void Render(Graphics g) {
 			DrawWalls(g);
 			DrawEntities(g);
+			DrawWeapon(g);
+		}
+
+		private void DrawWeapon(Graphics g) {
+			g.DrawImage(weaponTexture, ClientSize.Width / 2 - 96 / 2, ClientSize.Height - 96, 96, 96);
 		}
 
 		private void DrawWalls(Graphics g) {

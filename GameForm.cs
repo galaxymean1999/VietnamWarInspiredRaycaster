@@ -105,6 +105,18 @@ namespace RaycasterInWF {
                 // check if ladder in front
                 if (new Ray(gs.player.position.X, gs.player.position.Y, gs.player.headingAngle, 10, 0.01f, gs).CastRay().wallTypeHit == 2) {
                     gs.currentLevel++;
+
+                    if (gs.currentLevel == 2) {
+
+                        updateTimer.Enabled = false;
+
+                        EndForm end = new EndForm(gs);
+
+                        end.Show();
+                        this.Hide();
+                        return;
+                    }
+
                     gs.lvl = new Level(gs.currentLevel);
 
                     gs.player = new Player(13.5f, 13.5f);

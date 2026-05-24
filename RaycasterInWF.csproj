@@ -27,6 +27,12 @@
     <None Update="textures\entityTextures.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="textures\gun.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="textures\menu.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="textures\wallTextures.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

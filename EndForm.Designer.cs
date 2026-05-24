@@ -1,5 +1,5 @@
 ﻿namespace RaycasterInWF {
-    partial class EndScreen {
+    partial class EndForm {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -61,7 +61,7 @@
             l_highscore.TabIndex = 2;
             l_highscore.Text = "Highscore: 0";
             // 
-            // EndScreen
+            // EndForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -73,8 +73,9 @@
             MaximizeBox = false;
             MaximumSize = new Size(640, 480);
             MinimumSize = new Size(640, 480);
-            Name = "EndScreen";
+            Name = "EndForm";
             Text = "Escape from Vietnam 3D";
+            FormClosed += EndForm_FormClosed;
             Load += EndScreen_Load;
             ResumeLayout(false);
             PerformLayout();

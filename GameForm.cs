@@ -1,9 +1,4 @@
-using System.Diagnostics;
 using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Numerics;
-using System.Windows.Forms;
-using System.Xml;
 
 namespace RaycasterInWF {
     public partial class GameForm : Form {

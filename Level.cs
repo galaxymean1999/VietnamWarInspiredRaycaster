@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RaycasterInWF {
+﻿namespace RaycasterInWF {
 	public class Level {
 		public Level(int id) {
             map = new int[] { };
@@ -27,6 +21,9 @@ namespace RaycasterInWF {
 			switch (id) {
 				case 0:
 					map = new [] {
+						// 0 - empty space
+						// 1 - solid wall
+						// 2 - solid wall with a ladder texture
 						1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 						2,0,0,0,1,0,0,0,0,0,0,0,0,0,1,
 						1,1,1,0,1,0,1,1,1,1,1,1,1,0,1,
@@ -66,11 +63,12 @@ namespace RaycasterInWF {
 			}
 		}
 
-		private void LoadEntities(int lvl) {
+		private void LoadEntities(int id) {
 			entities.Clear();
 
-			switch (lvl) {
+			switch (id) {
 				case 0:
+					// enemies
 					NewEntity(2.5f, 1.5f, 0);
 					NewEntity(5.5f, 7.5f, 0);
 					NewEntity(9.5f, 9.5f, 0);
@@ -79,6 +77,7 @@ namespace RaycasterInWF {
 					NewEntity(5.5f, 9.5f, 0);
 					break;
 				case 1:
+					// enemies
 					NewEntity(1.5f, 13.5f, 0);
 					NewEntity(6.5f, 13.5f, 0);
 					NewEntity(4.5f, 9.5f, 0);
@@ -98,6 +97,11 @@ namespace RaycasterInWF {
 			}
 		}
 
+		// type
+		// 0 - enemy
+		// 1 - dead enemy
+		// 2 - chest
+		// 3 - open chest
 		private void NewEntity(float x, float y, int type) {
 			entities.Add(new Entity(x, y, type));
 		}

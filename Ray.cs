@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RaycasterInWF {
+﻿namespace RaycasterInWF {
 	public class Ray {
 		public Ray(float x, float y, float angle, int maxSteps, float stepSize, GameState gs) {
 			startX = x; startY = y;

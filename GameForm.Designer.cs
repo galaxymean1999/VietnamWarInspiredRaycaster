@@ -29,7 +29,7 @@
         private void InitializeComponent() {
             components = new System.ComponentModel.Container();
             updateTimer = new System.Windows.Forms.Timer(components);
-            hudPanel = new Panel();
+            hud = new Panel();
             l_health = new Label();
             l_healthHeading = new Label();
             l_score = new Label();
@@ -37,7 +37,7 @@
             l_levelHeading = new Label();
             l_scoreHeading = new Label();
             canvas = new PictureBox();
-            hudPanel.SuspendLayout();
+            hud.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)canvas).BeginInit();
             SuspendLayout();
             // 
@@ -47,20 +47,20 @@
             updateTimer.Interval = 1;
             updateTimer.Tick += Update;
             // 
-            // hudPanel
+            // hud
             // 
-            hudPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            hudPanel.BackColor = Color.FromArgb(0, 64, 0);
-            hudPanel.Controls.Add(l_health);
-            hudPanel.Controls.Add(l_healthHeading);
-            hudPanel.Controls.Add(l_score);
-            hudPanel.Controls.Add(l_level);
-            hudPanel.Controls.Add(l_levelHeading);
-            hudPanel.Controls.Add(l_scoreHeading);
-            hudPanel.Location = new Point(0, 370);
-            hudPanel.Name = "hudPanel";
-            hudPanel.Size = new Size(624, 71);
-            hudPanel.TabIndex = 0;
+            hud.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            hud.BackColor = Color.FromArgb(0, 64, 0);
+            hud.Controls.Add(l_health);
+            hud.Controls.Add(l_healthHeading);
+            hud.Controls.Add(l_score);
+            hud.Controls.Add(l_level);
+            hud.Controls.Add(l_levelHeading);
+            hud.Controls.Add(l_scoreHeading);
+            hud.Location = new Point(0, 370);
+            hud.Name = "hud";
+            hud.Size = new Size(624, 71);
+            hud.TabIndex = 0;
             // 
             // l_health
             // 
@@ -153,7 +153,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(624, 441);
-            Controls.Add(hudPanel);
+            Controls.Add(hud);
             Controls.Add(canvas);
             MaximizeBox = false;
             MaximumSize = new Size(640, 480);
@@ -163,8 +163,8 @@
             FormClosed += GameForm_FormClosed;
             KeyDown += GameForm_KeyDown;
             KeyUp += GameForm_KeyUp;
-            hudPanel.ResumeLayout(false);
-            hudPanel.PerformLayout();
+            hud.ResumeLayout(false);
+            hud.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)canvas).EndInit();
             ResumeLayout(false);
         }
@@ -172,7 +172,7 @@
         #endregion
 
         private System.Windows.Forms.Timer updateTimer;
-		private Panel hudPanel;
+		private Panel hud;
 		private Label l_scoreHeading;
 		private Label l_score;
 		private Label l_level;

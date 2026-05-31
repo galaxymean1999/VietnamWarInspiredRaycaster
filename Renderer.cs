@@ -100,7 +100,7 @@ namespace RaycasterInWF {
 				// realtive angle between player heading and entity
 				float angleEntityToPlayer = MathF.PI / 2 + gs.player.headingAngle + MathF.Atan(dx / dy);
 
-				// corection if the player y is less than entity y
+				// relative angle if the player y is less than entity y
 				if (entity.position.Y > gs.player.position.Y) {
 					dy = gs.player.position.Y - entity.position.Y;
 					dx = gs.player.position.X - entity.position.X;

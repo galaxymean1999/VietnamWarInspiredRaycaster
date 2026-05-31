@@ -25,9 +25,11 @@ namespace RaycasterInWF {
 		public bool shot = false;
 
 		public	void Update(GameState gs) {
+			// getting the bounding box position exactly on the middle of the entity
 			boundingBox.X = this.position.X - 0.25f;
 			boundingBox.Y = this.position.Y - 0.25f;
 
+			// if the type of an entity is an enemy then shoot
 			if (type == 0 && !shot) {
 				Shoot(gs);
 			}
@@ -45,6 +47,7 @@ namespace RaycasterInWF {
 		private void Shoot(GameState gs) {
 			shot = true;
 
+			// calculating the angle to shoot 
 			float dx = gs.player.position.X - position.X;
 			float dy = gs.player.position.Y - position.Y;
 

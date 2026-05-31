@@ -132,12 +132,9 @@ namespace RaycasterInWF {
 						// screen x position
 						int screenX = (int)MathF.Abs((int)((angleEntityToPlayer - Player.fov / 2) / Player.fov * ClientSize.Width));
 
-						if (entity.position.Y > gs.player.position.Y) {
-							screenX = (int)MathF.Abs((int)((angleEntityToPlayer - Player.fov / 2) / Player.fov * ClientSize.Width));
-						}
-
 						int startScreenX = screenX - width / 2;
 
+						// screen y position
 						int screenY = ClientSize.Height / 2 - height / 2;
 
 						// drawing the entity
